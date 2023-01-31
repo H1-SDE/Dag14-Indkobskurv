@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Dag14_Indkøbskurv
 {
-    internal class Merchandice
+    internal class CartItem
     {
-        public Merchandice() { }
+        public Product product { get; set; }
+        public DateTime addedOn { get; set; }
     }
 }

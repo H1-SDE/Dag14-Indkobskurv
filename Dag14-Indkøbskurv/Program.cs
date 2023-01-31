@@ -3,91 +3,126 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dag14_Indkøbskurv
 {
     internal class Program
     {
+        static public bool startCheck = false;
+        static public Data data = new Data();
 
-        public static int i = 1;
-        public static int j = 1;
+        static public Stopwatch watch = Stopwatch.StartNew();
         static void Main(string[] args)
         {
+
             while (true)
             {
-                string output = Start();
+                start();
+            }
+        }
 
-                switch (output)
+        static void start()
+        {
+            if (!startCheck)
+            {
+                Console.WriteLine("\nWhat are you?");
+                Console.WriteLine("1. admin");
+                Console.WriteLine("2. Normal user");
+                while (true)
+                {
+                    switch (Console.ReadLine())
+                    {
+                        case "1":
+                            StartAdmin();
+                            startCheck = false;
+                            break;
+                        case "2":
+                            StartNormal();
+                            startCheck = false;
+                            break;
+                        default:
+                            Console.WriteLine("try agen");
+                            break;
+                    }
+                }
+            }
+        }
+
+        static void StartAdmin()
+        {
+            string passwd = "1234";
+            Console.WriteLine("Hallo Noob plsss inter your password");
+            Console.WriteLine("Password:");
+            if(Console.ReadLine() == passwd)
+            {
+                Console.WriteLine("Hallo Admin");
+                Console.WriteLine("Sorry for calling you noob");
+                Console.WriteLine("Select what you want");
+                Console.WriteLine("1: Edit user");
+                Console.WriteLine("2: Edit Product");
+                switch (Console.ReadLine())
                 {
                     case "1":
+                        Console.WriteLine("comming soon");
                         break;
                     case "2":
-                        Event();
+                        Console.WriteLine("comming soon");
+                        break;
+                    default:
                         break;
                 }
             }
-        }
-
-        static string Start()
-        {
-            Console.WriteLine("Chouse what you want to do:");
-            Console.WriteLine("1: merchandise");
-            Console.WriteLine("2: Events");
-            return Console.ReadLine();
-        }
-
-        static void Event()
-        {
-            Events events = GetData.GetEvent();
-
-            Console.WriteLine("Couse a event:");
-            foreach (var ev in events.events)
+            else
             {
-                Console.WriteLine($"{i}: {ev.eventName}");
-                i++;
-                Console.WriteLine("\tEvent Date: " + ev.eventDate);
-                Console.WriteLine("\tLocation: " + ev.location);
-                Console.WriteLine("\tTickets:");
-                foreach (var t in ev.tickets)
-                {
-                    if (t.quantity > 0)
-                    {
-                        Console.WriteLine("\t\tTicket Type: " + t.ticketType);
-                        Console.WriteLine("\t\tPrice: " + t.price);
-                        Console.WriteLine("\t\tQuantity: " + t.quantity);
-                    }
-
-
-                }
+                Console.WriteLine("Try agen later noob");
+                Thread.Sleep(5000);
+                StartNormal();
+                return;
             }
 
-            Ticket(Console.ReadLine());
         }
 
-        static void Ticket(string eventet)
+        static void StartNormal()
         {
-            Events events = GetData.GetEvent();
-
-            Console.WriteLine("Couse a ticket:");
-            foreach (var ev in events.events)
+            try
             {
-                foreach (var t in ev.tickets)
-                {
-                    if (t.quantity > 0)
-                    {
-                        if (j.ToString() == eventet)
-                        {
-                            Console.WriteLine("\t\tTicket Type: " + t.ticketType);
-                            Console.WriteLine("\t\tPrice: " + t.price);
-                            Console.WriteLine("\t\tQuantity: " + t.quantity);
-                        }
-                    }
-                }
-                j++;
+                Print();
+
+                Console.WriteLine("Kunde id: ");
+                int kundeId = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Produkt id: ");
+                int produktId = Convert.ToInt32(Console.ReadLine());
+
+                data.GetCustomers()[kundeId].AddToCart(kundeId, data.GetProducts()[produktId]);
             }
+            catch { Console.WriteLine("Fejl. Tryk en tast for at fortsætte"); Console.ReadLine(); };
         }
 
-        public void SaveData (string type, string eventName?, string ) { }
+        static void Print()
+        {
+            Console.Clear();
+            foreach (Product i in data.GetProducts())
+            {
+                Console.Write("id: " + i.Id + "\tTitle: " + i.Title + "\t Type: " + i.Type);
+                if (i.Type == "ticket")
+                {
+                    Console.Write("\t\tTid: " + i.watch.ElapsedMilliseconds + "\n");
+                }
+                else { Console.WriteLine(""); };
+            }
+
+            Console.WriteLine("");
+
+            foreach (Customer i in data.GetCustomers())
+            {
+                Console.WriteLine("id: " + i.Id + "\tName: " + i.Name);
+                
+                i.Cart.ForEach(x => Console.WriteLine("\t\t- " + x.Title));
+            }
+
+            Console.WriteLine("");
+        }
     }
 }
